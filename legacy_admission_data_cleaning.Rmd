@@ -1,0 +1,68 @@
+---
+title: "legacy_admissions_data_cleaning"
+author: "Brecken Enright"
+date: "2024-10-05"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+```{r, show_col_types = FALSE}
+legacy_data <- read_csv("2019_2024_legacy_admissions.csv")
+cmc_admissions <- read_csv("2019_2024_CMC_admissions.csv")
+head(legacy_data)
+```
+
+```{r}
+cmc_legacy_data <- legacy_data %>%
+  filter(school == "CMC")
+glimpse(cmc_legacy_data)
+```
+
+```{r}
+cmc_legacy_data <- cmc_legacy_data %>%
+  rename("legacy_admitted" = "num_students_admitted",
+         "legacy_enrolled" = "num_students_enrolled")
+glimpse(cmc_legacy_data)
+```
+
+```{r}
+total_admitted = cmc_admissions$admitted
+total_enrolled = cmc_admissions$enrolled
+
+cmc_legacy_data <- cbind(cmc_legacy_data, total_admitted, total_enrolled)
+glimpse(cmc_legacy_data)
+```
+
+
+```{r}
+cmc_legacy_data <- cmc_legacy_data %>%
+  select(-num_students_acc_admission) %>%
+  mutate(legacy_admitted = as.integer(legacy_admitted),
+         legacy_enrolled = as.integer(legacy_enrolled),
+         total_admitted = as.integer(total_admitted),
+         total_enrolled = as.integer(total_enrolled),
+         percent_legacy_admitted = (100*(legacy_admitted/total_admitted)),
+         percent_legacy_enrolled = (100*(legacy_enrolled/total_enrolled)))
+
+glimpse(cmc_legacy_data)
+
+```
+
+Subtract legacy from total admitted and enrolled
+```{r}
+cmc_legacy_data <- cmc_legacy_data %>%
+  mutate(not_legacy_enrolled = (total_enrolled - legacy_enrolled),
+         not_legacy_admitted = (total_admitted - legacy_admitted))
+write_csv(cmc_legacy_data,"2019-24_cmc_legacy_data.csv")
+```
+
+
+
+

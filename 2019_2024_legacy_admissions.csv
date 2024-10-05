@@ -1,0 +1,10 @@
+year,school,num_students_admitted,num_students_acc_admission,num_students_enrolled
+2023-2024,CMC,15,11,11
+2023-2024,HMC,15,11,11
+2022-2023,CMC,21,14,14
+2022-2023,HMC,too_small_to_report,too_small_to_report,too_small_to_report
+2021-2022,CMC,38,29,28
+2021-2022,HMC,23,too_small_to_report,too_small_to_report
+2020-2021,CMC,35,28,23
+2019-2020,CMC,26,23,23
+2019-2020,PZ,74,50,45

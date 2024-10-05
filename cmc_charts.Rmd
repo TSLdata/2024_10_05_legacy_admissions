@@ -1,0 +1,56 @@
+---
+title: "cmc_charts"
+author: "Brecken Enright"
+date: "2024-10-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+cmc_legacy_data <- read_csv("2019-24_cmc_legacy_data.csv")
+```
+
+Plots
+```{r}
+admitted <- cmc_legacy_data %>%
+  select(year, school, legacy_admitted, not_legacy_admitted)
+
+cmc_admitted_long <- admitted %>%
+  pivot_longer(cols = c(legacy_admitted, not_legacy_admitted), names_to = 'admission_type',
+               values_to = c('num_students'))
+view(cmc_admitted_long)
+```
+
+```{r}
+cmc_admitted_chart <- cmc_admitted_long %>%
+  ggplot(aes(fill= admission_type, x=year, y= num_students)) +
+  geom_bar(stat='identity', position='stack')
+
+cmc_admitted_chart
+```
+
+```{r}
+view(cmc_legacy_data)
+enrolled <- cmc_legacy_data %>%
+  select(year, school, legacy_enrolled, not_legacy_enrolled)
+
+cmc_enrolled_long <- enrolled %>%
+  pivot_longer(cols = c(legacy_enrolled, not_legacy_enrolled), names_to = 'admission_type', values_to = c('num_students'))
+
+view(cmc_enrolled_long)
+```
+
+```{r}
+cmc_enrolled_chart <- cmc_enrolled_long %>%
+  ggplot(aes(fill= admission_type, x=year, y= num_students)) +
+  geom_bar(stat='identity', position='stack')
+
+cmc_enrolled_chart
+```
