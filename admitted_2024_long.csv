@@ -1,0 +1,5 @@
+year,school,admission_type,num_students
+2023-2024,CMC,legacy_admitted,15
+2023-2024,CMC,not_legacy_admitted,630
+2023-2024,HMC,legacy_admitted,15
+2023-2024,HMC,not_legacy_admitted,611

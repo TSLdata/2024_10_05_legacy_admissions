@@ -60,9 +60,36 @@ Subtract legacy from total admitted and enrolled
 cmc_legacy_data <- cmc_legacy_data %>%
   mutate(not_legacy_enrolled = (total_enrolled - legacy_enrolled),
          not_legacy_admitted = (total_admitted - legacy_admitted))
-write_csv(cmc_legacy_data,"2019-24_cmc_legacy_data.csv")
+#write_csv(cmc_legacy_data,"2019-24_cmc_legacy_data.csv")
 ```
 
+```{r}
+legacy_data_2024 <- legacy_data %>%
+  filter(year == "2023-2024")
+glimpse(legacy_data_2024)
+```
+```{r}
+cmc_admissions_2024 <- cmc_admissions %>%
+  filter(year == "2023-2024")
+cmc_admissions_2024
+hmc_admissions_2024 <- read_csv("HMC_admissions.csv")
+hmc_admissions_2024
 
+admissions_2024 <- rbind(cmc_admissions_2024, hmc_admissions_2024)
+admissions_2024 
+legacy_admitted <- legacy_data_2024$num_students_admitted
+legacy_enrolled <- legacy_data_2024$num_students_enrolled
+admissions_2024 <- cbind(admissions_2024, legacy_admitted, legacy_enrolled)
+admissions_2024
 
+admissions_2024 <- admissions_2024%>%
+  mutate(legacy_admitted = as.integer(legacy_admitted),
+         legacy_enrolled = as.integer(legacy_enrolled),
+         not_legacy_enrolled = (enrolled - legacy_enrolled),
+         not_legacy_admitted = (admitted - legacy_admitted))
+
+admissions_2024
+write_csv(admissions_2024, "legacy_admissions_2024.csv")
+
+```
 

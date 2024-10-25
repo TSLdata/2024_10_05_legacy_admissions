@@ -1,0 +1,120 @@
+---
+title: "2024 Charts"
+author: "Brecken Enright"
+date: "2024-10-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(waffle)
+```
+
+```{r}
+admissions_2024 <- read_csv("legacy_admissions_2024.csv")
+```
+
+```{r}
+admitted_2024 <- admissions_2024 %>%
+  select(year, school, legacy_admitted, not_legacy_admitted)
+head(admitted_2024)
+#write_csv(admitted_2024,"admitted_2024.csv")
+
+admitted_2024_long <- admitted_2024 %>%
+  pivot_longer(cols = c(legacy_admitted, not_legacy_admitted), names_to = 'admission_type',
+               values_to = c('num_students'))
+head(admitted_2024_long)
+write_csv(admitted_2024_long,"admitted_2024_long.csv")
+```
+
+```{r}
+admitted_2024_chart <- admitted_2024_long %>%
+  ggplot(aes(fill= admission_type, x=school, y= num_students)) +
+  geom_bar(stat='identity', position='stack')
+
+admitted_2024_chart
+```
+
+```{r}
+cmc <- admissions_2024[1,]
+w_cmc <- c(legacy_admitted = 15, not_legacy_admitted = 630)
+w_cmc
+waffle(w_cmc, rows = 15)
+```
+
+```{r}
+library(ggwaffle)
+
+cmc_admitted_2024_long <- admitted_2024_long %>%
+  filter(school == "cmc")
+  
+waffle_data <- waffle_iron(cmc_admitted_2024_long, aes_d(group = admission_type))
+
+ggplot(waffle_data, aes(x, y, fill = admission_type)) + 
+  geom_waffle()
+```
+
+```{r}
+head(mpg)
+waffle_data <- waffle_iron(mpg, aes_d(group = class))
+
+ggplot(waffle_data, aes(x, y, fill = group)) + 
+  geom_waffle()
+```
+
+```{r}
+admission_waffle <- ggplot(data = admitted_2024_long, aes(fill= admission_type, values=num_students)) + geom_waffle(color = "white",size = 1, n_rows = 25, flip =TRUE) +
+  facet_wrap(~school, nrow=2) +
+  theme_void()
+
+admission_waffle
+```
+
+```{r}
+enrolled_2024 <- admissions_2024 %>%
+  select(year, school, legacy_enrolled, not_legacy_enrolled)
+
+#write_csv(admitted_2024,"admitted_2024.csv")
+
+enrolled_2024_long <- enrolled_2024 %>%
+  pivot_longer(cols = c(legacy_enrolled, not_legacy_enrolled), names_to = 'admission_type',
+               values_to = c('number of students'))
+head(enrolled_2024_long)
+
+```
+
+```{r}
+enrolled_waffle <- ggplot(data = enrolled_2024_long, aes(fill= admission_type, values=`number of students`)) + geom_waffle(color = "white",size = 1, n_rows = 15, flip =TRUE) +
+  facet_wrap(~school, nrow=1) +
+  theme_void() + theme(legend.title = element_blank()) +
+  scale_fill_discrete(labels = c("Enrolled legacy/donor students", "Other enrolled students")) +
+  ggtitle("Class of 2027 legacy/donor affiliated students
+          
+          ") + theme(text = element_text(family = "palatino"))
+
+enrolled_waffle
+#ggsave("legacy_enrollment_2024.png")
+```
+
+
+```{r}
+# a data frame with all the annotation info
+annotation <- data.frame(
+   x = c(2),
+   y = c(20),
+   label = c("label 1")
+)
+
+ann_text <- data.frame(mpg = 15,wt = 5,lab = "Text",
+                       cyl = factor(8,levels = c("4","6","8")))
+
+p + geom_text(data = ann_text,label = "Text")
+
+# Add text
+enrolled_waffle + annotate("text", x = 2.5, y = -1, label = "Some text")
+```
+
